@@ -1,1 +1,7 @@
 PycSync: A python flickr photo uploader
+
+Python depencencies:
+- flickrapi
+- PyYaml
+
+Put your flickr api keys in ~/.pycsync
