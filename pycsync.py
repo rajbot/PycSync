@@ -193,7 +193,28 @@ def flickr_update_meta(flickr, f, meta_dict):
         save_meta_dict(meta_dict)
         
     time.sleep(1)
+
+# flickr_update_set()
+#______________________________________________________________________________
+### If this script died after an upload but before a photo was added to the set,
+### add it to the set when the script is re-run
+def flickr_update_set(flickr, meta_dict):
+    photos_in_set = []
+    flickr_set_id = meta_dict['flickr_set_id']
+
+    for photo in flickr.walk_set(flickr_set_id):
+        photos_in_set.append(photo.get('id'))
     
+    for f, val in meta_dict.iteritems():
+        if 'flickr_set_id' == f:
+            continue
+
+        flickr_photo_id = val['flickr_photo_id']
+        if not flickr_photo_id in photos_in_set:
+            print("  Adding photo %s (id=%s) to set!" % (f, flickr_photo_id))
+            flickr.photosets_addPhoto(photoset_id=flickr_set_id, photo_id=flickr_photo_id)
+            time.sleep(1)
+            
 # __main__
 #______________________________________________________________________________
 if '__main__' == __name__:
@@ -211,7 +232,7 @@ if '__main__' == __name__:
         flickr_set_id = meta_dict['flickr_set_id']
     else:
         flickr_set_id = None
-    
+            
     files = os.listdir('.')
     files.sort()
     for f in files:
@@ -227,20 +248,22 @@ if '__main__' == __name__:
         if f in meta_dict:
             print("  Already uploaded this file, checking meta")
             flickr_update_meta(flickr, f, meta_dict)
-            continue
-            
-        flickr_photo_id = flickr_upload_photo(flickr, f, config_dict)
-        meta_dict[f] = get_meta_dict_val(f, flickr_photo_id, config_dict)
-        save_meta_dict(meta_dict)
-
-        if None == flickr_set_id:
-            #we need to upload at least one pic before creating a set
-            flickr_set_id = flickr_create_set(flickr, config_dict['album'], flickr_photo_id)
-            meta_dict['flickr_set_id'] = flickr_set_id
-            save_meta_dict(meta_dict)
         else:
-            flickr.photosets_addPhoto(photoset_id=flickr_set_id, photo_id=flickr_photo_id)
-        
+            #upload and add to set            
+            flickr_photo_id = flickr_upload_photo(flickr, f, config_dict)
+            meta_dict[f] = get_meta_dict_val(f, flickr_photo_id, config_dict)
+            save_meta_dict(meta_dict)
+    
+            if None == flickr_set_id:
+                #we need to upload at least one pic before creating a set
+                flickr_set_id = flickr_create_set(flickr, config_dict['album'], flickr_photo_id)
+                meta_dict['flickr_set_id'] = flickr_set_id
+                save_meta_dict(meta_dict)
+            else:
+                flickr.photosets_addPhoto(photoset_id=flickr_set_id, photo_id=flickr_photo_id)
+
+    flickr_update_set(flickr, meta_dict)
+    
     remove_lock()
     end_time    = datetime.datetime.now()
     delta       = end_time - start_time
