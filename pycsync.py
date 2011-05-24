@@ -88,6 +88,15 @@ def save_meta_dict(meta_dict):
     stream = file(meta_path, 'w')        
     yaml.dump(meta_dict, stream, default_flow_style=False)
 
+# flickr_upload_callback()
+#______________________________________________________________________________
+def flickr_upload_callback(progress, done):
+    if done:
+        print "  Done uploading"
+    else:
+        print "\b\b\b\b\b%3d%%" % progress,
+        sys.stdout.flush()
+        
 # flickr_upload_photo()
 #______________________________________________________________________________
 def flickr_upload_photo(flickr, f, config_dict):
@@ -95,7 +104,7 @@ def flickr_upload_photo(flickr, f, config_dict):
     is_family = config_dict.get('is_family', 0)
     is_friend = config_dict.get('is_friend', 0)
     
-    rsp = flickr.upload(filename=f, is_public=is_public, is_family=is_family, is_friend=is_friend, format='etree')
+    rsp = flickr.upload(filename=f, is_public=is_public, is_family=is_family, is_friend=is_friend, format='etree', callback=flickr_upload_callback)
     photoid = rsp.findtext('photoid')
 
     print("  uploaded photo with id " + photoid)
