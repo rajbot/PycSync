@@ -1,15 +1,15 @@
-PycSync: 2-way Syncronize local photos with flickr
+PycSync: 2-way Synchronize local photos with flickr
 ==================================================
 
-Workflow:
-
+Workflow
+--------
 - place photos in directory
 - run PycSync, which creates a flickr set and uploads photos
 - edit metadata on flickr
 - resync to copy new photos to flickr and download metadata to local machine
 
-Python depencencies:
-
+Python depencencies
+-------------------
 - flickrapi
 - pyyaml
 
