@@ -26,6 +26,7 @@ import sys
 import datetime
 import time
 import json
+import hashlib
 
 #globals
 rc_path     = os.path.expanduser('~/.pycsync')
@@ -121,15 +122,78 @@ def flickr_create_set(flickr, title, primary_photo_id):
     print "  created set with id " + flickr_set_id
     return flickr_set_id
 
+# get_md5
+#______________________________________________________________________________
+def get_md5(f):
+    f = open(f)
+    c = f.read()
+    f.close()
+    m = hashlib.md5()
+    m.update(c)
+    return m.hexdigest()
+    
 # get_meta_dict_val()
 #______________________________________________________________________________
-def get_meta_dict_val(flickr_photo_id, config_dict):
+def get_meta_dict_val(f, flickr_photo_id, config_dict):
+    md5 = get_md5(f)
+
     d = {'flickr_photo_id':flickr_photo_id, 
          'is_public':config_dict['is_public'], 
          'is_family':config_dict['is_family'], 
-         'is_friend':config_dict['is_friend']
+         'is_friend':config_dict['is_friend'],
+         'md5':md5
         }
     return d
+
+# update_dict()
+#______________________________________________________________________________
+def update_dict(dict, tag, val):
+    needs_save = False
+    
+    if not tag in dict:
+        print("  adding tag %s to dict with val = %s" % (tag, val))
+        dict[tag] = val
+        needs_save = True
+    elif dict[tag] != val:
+        print("  updating dict tag %s from %s to %s" % (tag, dict[tag], val))
+        dict[tag] = val
+        needs_save = True
+        
+    return needs_save
+
+# update_meta_from_flickr()
+#______________________________________________________________________________
+def flickr_update_meta(flickr, f, meta_dict):
+    flickr_photo_id = meta_dict[f]['flickr_photo_id']
+    rsp = flickr.photos_getInfo(photo_id=flickr_photo_id, format='etree')
+    import xml.etree.ElementTree as ET
+    title = rsp.findtext('photo/title')    
+    basename, extension = os.path.splitext(f)
+    needs_save = False
+    d = meta_dict[f]
+    
+    if title != basename:
+        needs_save |= update_dict(d, 'title', title)
+    
+    vis = rsp.find('photo/visibility')
+
+    is_public = int(vis.get('ispublic'))
+    is_family = int(vis.get('isfamily'))
+    is_friend = int(vis.get('isfriend'))    
+
+    needs_save |= update_dict(d, 'is_public', is_public)
+    needs_save |= update_dict(d, 'is_family', is_family)
+    needs_save |= update_dict(d, 'is_friend', is_friend)
+    
+    if not 'md5' in d:
+        md5 = get_md5(f)
+        needs_save |= update_dict(d, 'md5', md5)
+            
+    if needs_save:        
+        save_meta_dict(meta_dict)
+        
+    time.sleep(1)
+    
 # __main__
 #______________________________________________________________________________
 if '__main__' == __name__:
@@ -161,11 +225,12 @@ if '__main__' == __name__:
             continue
 
         if f in meta_dict:
-            print("  Already uploaded this file, skipping")
+            print("  Already uploaded this file, checking meta")
+            flickr_update_meta(flickr, f, meta_dict)
             continue
             
         flickr_photo_id = flickr_upload_photo(flickr, f, config_dict)
-        meta_dict[f] = get_meta_dict_val(flickr_photo_id, config_dict)
+        meta_dict[f] = get_meta_dict_val(f, flickr_photo_id, config_dict)
         save_meta_dict(meta_dict)
 
         if None == flickr_set_id:
