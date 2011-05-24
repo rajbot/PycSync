@@ -112,6 +112,15 @@ def flickr_create_set(flickr, title, primary_photo_id):
     print "  created set with id " + flickr_set_id
     return flickr_set_id
 
+# get_meta_dict_val()
+#______________________________________________________________________________
+def get_meta_dict_val(flickr_photo_id, config_dict):
+    d = {'flickr_photo_id':flickr_photo_id, 
+         'is_public':config_dict['is_public'], 
+         'is_family':config_dict['is_family'], 
+         'is_friend':config_dict['is_friend']
+        }
+    return d
 # __main__
 #______________________________________________________________________________
 if '__main__' == __name__:
@@ -147,7 +156,7 @@ if '__main__' == __name__:
             continue
             
         flickr_photo_id = flickr_upload_photo(flickr, f, config_dict)
-        meta_dict[f] = {'flickr_photo_id':flickr_photo_id}
+        meta_dict[f] = get_meta_dict_val(flickr_photo_id, config_dict)
         save_meta_dict(meta_dict)
 
         if None == flickr_set_id:
