@@ -1,6 +1,13 @@
-PycSync: A python flickr photo uploader
+PycSync: Syncronize local photos with flickr
+
+Workflow:
+
+- edit photos locally
+- edit metadata on flickr
+- resync to copy photos to flickr and metadata to local machine
 
 Python depencencies:
+
 - flickrapi
 - pyyaml
 
