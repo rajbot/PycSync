@@ -13,6 +13,8 @@ Python depencencies
 - flickrapi
 - pyyaml
 
+Usage
+-----
 Put your flickr api keys in ~/.pycsync
  flickr_api: [api_key, secret]
 
