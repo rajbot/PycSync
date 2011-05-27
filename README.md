@@ -33,6 +33,7 @@ Todo
 - Create posterous post of flickr favorites
 - Create twitter post of public flickr favorites
 - Sync tags, descriptions, and notes
+- Add flickr machine tags with hashes: http://longair.net/blog/2009/12/19/hashing-flickr-photos/
 
 Usage
 -----

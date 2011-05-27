@@ -241,8 +241,8 @@ if '__main__' == __name__:
         if not os.path.isfile:
             print("  not a file, skipping")
             continue
-        if not f.lower().endswith('jpg'):
-            print("  filename does not end with .jpg, skipping")
+        if not (f.lower().endswith('jpg') or f.lower().endswith('gif')):
+            print("  filename does not end with .jpg or .gif, skipping")
             continue
 
         if f in meta_dict:
