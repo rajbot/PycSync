@@ -243,8 +243,8 @@ if '__main__' == __name__:
             continue
 
         allowed_formats = ['.jpg', '.gif', '.png', '.mov']
-        if not (os.path.splitext(f.lower())[1] in allowd_formats):
-            print("  filename does not end with {f}, skipping".format(f=allowed_formats)
+        if not (os.path.splitext(f.lower())[1] in allowed_formats):
+            print("  filename does not end with {f}, skipping".format(f=allowed_formats))
             continue
 
         if f in meta_dict:
