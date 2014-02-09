@@ -8,19 +8,19 @@ very early user. I have no idea why I have been using it for so long.
 iPhoto is less buggy, crashy, and slow than it used to be, but it is
 still incredibly bad.
 
-Since I no longer crop or edit photos, I really don't need photo editing
+I no longer try to crop or edit photos, so I really don't need photo editing
 software anymore. My new Canon T1i with came with several Canon utilities
-which I installed. The only one that seems useful is the utility that
-launches when I put a memorycard into the card reader and copies the images
-to a directory in my OSX Pictures folder.
+which I installed. The only one that seems useful is Canon ImageBrowser,
+which launches automatically when I put a memory card into the card reader.
+It automatically copies the images to a dated directory in my  Pictures folder.
 
 Workflow
 --------
 - Insert memory card in card reader
 - Canon utility automatically launches instead of iPhoto
 - Import photos into a directory
-- Use the OSX Finder in Cover Flow mode to review the photos
-- Delete blurry photos using the Finder
+- Use the ImageBrowser or OSX Finder in Cover Flow mode to review the photos
+- Delete blurry photos
 - Add PycSync.yml to directory with name of album and privacy settings
 - Run pycsync.py, which creates a flickr set and uploads photos
 - Edit metadata on flickr (optional)
